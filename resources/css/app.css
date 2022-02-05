@@ -1,8 +1,9 @@
+/*
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-@import "container.css";
-/*
+*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,6 +11,13 @@
     .container-menu {
         @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
     }
+
+    #navigation-menu{
+        height: calc(100vh - 4rem);
+    }
+
+    .navigation-link:hover .navigation-submenu{
+        display: block !important;
+    }
 }
-/* y cambiar en navigation la clase container por container-menu */
 
