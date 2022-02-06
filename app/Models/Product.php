@@ -15,6 +15,11 @@ class Product extends Model
     protected $fillable = ['name', 'slug', 'description', 'price', 'subcategory_id', 'brand_id', 'quantity'];
     //protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function sizes(){
         return $this->hasMany(Size::class);
     }
