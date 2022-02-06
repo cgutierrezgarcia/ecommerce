@@ -11,6 +11,11 @@ class Category extends Model
 
     protected $fillable = ['name', 'slug', 'image', 'icon'];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function subcategories(){
         return $this->hasMany(Subcategory::class);
     }

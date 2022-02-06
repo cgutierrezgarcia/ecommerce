@@ -23,8 +23,8 @@ class WelcomePageTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                ->clickLink('Categorías')
-                ->assertSee('Smartwatches');
+                    ->clickLink('Categorías')
+                    ->assertSee('Smartwatches');
         });
     }
 }
