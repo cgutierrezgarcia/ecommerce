@@ -80,7 +80,11 @@
         </div>
 
         <div>
-            <x-jet-button class="mt-6 mb-4" wire:click="create_order">
+            <x-jet-button
+                wire:loading.attr="disabled"
+                wire:target="create_order"
+                class="mt-6 mb-4"
+                wire:click="create_order">
                 Continuar con la compra
             </x-jet-button>
 
@@ -133,14 +137,24 @@
                 </p>
                 <p class="flex justify-between items-center">
                     Envío
-                    <span class="font-semibold">Gratis</span>
+                    <span class="font-semibold">
+                        @if($envio_type == 1 || $shipping_cost == 0)
+                            Gratis
+                            @else
+                            {{ $shipping_cost }} &euro;
+                        @endif
+                    </span>
                 </p>
 
                 <hr class="mt-4 mb-3">
 
                 <p class="flex justify-between items-center font-semibold">
                     <span class="text-lg">Total</span>
-                    {{ Cart::subtotal() }} &euro;
+                    @if($envio_type == 1)
+                        {{ Cart::subtotal() }} &euro;
+                    @else
+                        {{ Cart::subtotal() + $shipping_cost }} &euro;
+                    @endif
                 </p>
             </div>
         </div>
