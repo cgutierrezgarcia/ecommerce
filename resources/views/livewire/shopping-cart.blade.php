@@ -87,7 +87,7 @@
                     {{ Cart::subtotal() }} &euro;
                 </div>
                 <div>
-                    <x-button-link color="orange">
+                    <x-button-link color="orange" href="{{ route('orders.create') }}">
                         Continuar
                     </x-button-link>
                 </div>
