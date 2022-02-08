@@ -1,4 +1,4 @@
-<x-app-layout>
+<div>
     <div class="grid grid-cols-5 gap-6 container-menu py-8">
         <div class="col-span-3">
             <div class="bg-white rounded-lg shadow-lg px-6 py-4 mb-6">
@@ -97,26 +97,25 @@
         </div>
     </div>
 
-    <script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}&currency=EUR"></script>
-
-    <script>
-        paypal.Buttons({
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: "{{ $order->total }}"
-                        },
-                    }]
-                });
-            },
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(orderData) {
-                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-                    var transaction = orderData.purchase_units[0].payments.captures[0];
-                    alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
-                });
-            }
-        }).render('#paypal-button-container');
-    </script>
-</x-app-layout>
+    @push('scripts')
+        <script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}&currency=EUR"></script>
+        <script>
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: "{{ $order->total }}"
+                            }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(orderData) {
+                        Livewire.emit('payOrder');
+                    });
+                }
+            }).render('#paypal-button-container');
+        </script>
+    @endpush
+</div>
