@@ -22,6 +22,7 @@
     },
     "dependencies": {
         "@ckeditor/ckeditor5-build-classic": "^32.0.0",
+        "dropzone": "^6.0.0-beta.2",
         "sweetalert2": "^11.4.0"
     }
 }
