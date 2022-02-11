@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="container-menu py-12">
-        <section class="grid grid-cols-5 gap-6 text-white">
+        <section class="grid lg:grid-cols-5 gap-6 text-white">
             <a href="{{ route('orders.index') . '?status=1' }}" class="bg-red-500 bg-opacity-75 rounded-lg px-12 pt-8 pb-4">
                 <p class="text-center text-2xl">
                     {{ $ordersByStatus[1] }}

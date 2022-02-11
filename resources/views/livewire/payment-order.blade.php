@@ -1,6 +1,6 @@
 <div>
-    <div class="grid grid-cols-5 gap-6 container-menu py-8">
-        <div class="col-span-3">
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-6 container-menu py-8">
+        <div class="order-2 lg:order-1 xl:col-span-3">
             <div class="bg-white rounded-lg shadow-lg px-6 py-4 mb-6">
                 <p class="text-gray-700 uppercase"><span class="font-semibold">Número de Orden:</span> {{ $order->id }}</p>
             </div>
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div class="col-span-2">
+        <div class="order-1 lg:order-2 xl:col-span-2">
             <div class="bg-white rounded-lg shadow-lg px-6 pt-6">
                 <div class="flex justify-between items-center mb-4">
                     <img class="h-8" src="{{ asset('img/MC_VI_DI_2-1.jpg') }}" alt="">
