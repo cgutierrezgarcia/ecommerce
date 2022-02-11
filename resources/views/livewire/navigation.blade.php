@@ -42,9 +42,11 @@
                         {{ __('My Orders') }}
                     </x-jet-dropdown-link>
 
+                    @role('admin')
                     <x-jet-dropdown-link href="{{ route('admin.index') }}">
                         {{ __('Admin') }}
                     </x-jet-dropdown-link>
+                    @endrole
 
                     <div class="border-t border-gray-100"></div>
 
