@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Admin;
 
 use App\Models\Brand;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -134,16 +135,21 @@ class CreateCategory extends Component
             'editForm.icon' => 'required',
             'editForm.brands' => 'required',
         ];
+
         if ($this->editImage) {
             $rules['editImage'] = 'required|image|max:1024';
         }
+
         $this->validate($rules);
+
         if ($this->editImage) {
             Storage::disk('public')->delete($this->editForm['image']);
             $this->editForm['image'] = $this->editImage->store('categories', 'public');
         }
+
         $this->category->update($this->editForm);
         $this->category->brands()->sync($this->editForm['brands']);
+
         $this->reset(['editForm', 'editImage']);
         $this->getCategories();
     }
