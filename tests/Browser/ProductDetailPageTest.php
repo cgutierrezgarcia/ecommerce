@@ -93,4 +93,91 @@ class ProductDetailPageTest extends DuskTestCase
                 ->screenshot('s2-t7');
         });
     }
+
+    /** @test */
+    public function the_decrement_and_increment_btns_works_as_expected()
+    {
+        $category = Category::factory()->create();
+
+        $brand = Brand::factory()->create();
+        $category->brands()->attach($brand->id);
+
+        $subcategory = Subcategory::factory()->create([
+            'color' => false,
+            'size' => false
+        ]);
+
+        $product = Product::factory()->create([
+            'subcategory_id' => $subcategory->id,
+            'brand_id' => $brand->id,
+            'quantity' => 5
+        ]);
+        Image::factory()->create([
+            'imageable_id' => $product->id,
+            'imageable_type' => Product::class
+        ]);
+
+        $this->browse(function (Browser $browser) use ($product) {
+
+            $browser->visit('/products/' . $product->slug)
+                ->pause(1000)
+                ->resize(500, 1200);
+
+            for ($i = 1; $i < $product->quantity +5; $i++) {
+                $browser->pause(100)
+                    ->press('+');
+            }
+
+            $browser->pause(1000)
+                ->assertSeeIn('@product_qty', $product->quantity)
+                ->screenshot('s2-t8');
+        });
+    }
+
+    /** @test */
+    public function it_shows_the_product_color_and_size_selects()
+    {
+        $category = Category::factory()->create();
+
+        $brand = Brand::factory()->create();
+        $category->brands()->attach($brand->id);
+
+        $subcategoryColor = Subcategory::factory()->create([
+            'color' => true,
+            'size' => false
+        ]);
+        $subcategoryColorSize = Subcategory::factory()->create([
+            'color' => true,
+            'size' => true
+        ]);
+
+        $productColor = Product::factory()->create([
+            'subcategory_id' => $subcategoryColor->id,
+            'brand_id' => $brand->id
+        ]);
+        $productColorSize = Product::factory()->create([
+            'subcategory_id' => $subcategoryColorSize->id,
+            'brand_id' => $brand->id
+        ]);
+        for ($i = 1; $i <= 2; $i++) {
+            Image::factory()->create([
+                'imageable_id' => $i,
+                'imageable_type' => Product::class
+            ]);
+        }
+
+        $this->browse(function (Browser $browser) use ($productColor, $productColorSize) {
+
+            $browser->visit('/products/' . $productColor->slug)
+                ->pause(1000)
+                ->assertSourceHas('Seleccionar un color</option>')
+                ->screenshot('s2-t9-product-color');
+
+            $browser->visit('/products/' . $productColorSize->slug)
+                ->pause(1000)
+                ->assertSourceHas('Seleccione una talla</option>')
+                ->assertSourceHas('Seleccione un color</option>')
+                ->screenshot('s2-t9-product-color-size');
+        });
+    }
 }
