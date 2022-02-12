@@ -7,7 +7,7 @@
         wire:click="decrement">
         -
     </x-jet-secondary-button>
-    <span class="mx-2 text-gray-700">{{ $qty }}</span>
+    <span dusk="shopping_cart_page_product_qty" class="mx-2 text-gray-700">{{ $qty }}</span>
     <x-jet-secondary-button
         x-bind:disabled="$wire.qty >= $wire.quantity"
         wire:loading.attr="disabled"

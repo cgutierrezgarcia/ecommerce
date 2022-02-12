@@ -1,5 +1,5 @@
 <div x-data>
-    <p class="text-gray-700 mb-4">
+    <p dusk="product_stock" class="text-gray-700 mb-4">
         <span class="font-semibold text-lg">Stock disponible:</span> {{ $quantity }}
     </p>
     <div class="flex">

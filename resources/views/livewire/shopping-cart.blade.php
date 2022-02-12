@@ -58,7 +58,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-500">
                                 <span>{{ $item->price }} &euro;</span>
-                                <a class="ml-6 cursor-pointer hover:text-red-600"
+                                <a dusk="shopping_cart_trash_btn" class="ml-6 cursor-pointer hover:text-red-600"
                                    wire:click="delete('{{ $item->rowId }}')"
                                    wire:loading.class="text-red-600 opacity-25"
                                    wire:target="delete('{{ $item->rowId }}')">
@@ -107,7 +107,7 @@
     @if(Cart::count())
         <div class="bg-white rounded-lg shadow-lg px-6 py-4 mt-4">
             <div class="flex justify-between items-center">
-                <div class="text-gray-700">
+                <div dusk="shopping_cart_total" class="text-gray-700">
                     <span class="font-bold text-lg">Total:</span>
                     {{ Cart::subtotal() }} &euro;
                 </div>

@@ -4,8 +4,10 @@ namespace Tests\Browser;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Color;
 use App\Models\Image;
 use App\Models\Product;
+use App\Models\Size;
 use App\Models\Subcategory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Str;
@@ -178,6 +180,101 @@ class ProductDetailPageTest extends DuskTestCase
                 ->assertSourceHas('Seleccione una talla</option>')
                 ->assertSourceHas('Seleccione un color</option>')
                 ->screenshot('s2-t9-product-color-size');
+        });
+    }
+
+    /** @test */
+    public function it_shows_the_stock_of_every_product_type()
+    {
+        $category = Category::factory()->create();
+
+        $brand = Brand::factory()->create();
+        $category->brands()->attach($brand->id);
+
+
+        $subcategory = Subcategory::factory()->create([
+            'color' => false,
+            'size' => false
+        ]);
+        $product1 = Product::factory()->create([
+            'subcategory_id' => $subcategory->id,
+            'brand_id' => $brand->id,
+            'quantity' => 3
+        ]);
+
+
+        $subcategoryColor = Subcategory::factory()->create([
+            'color' => true,
+            'size' => false
+        ]);
+        $product2 = Product::factory()->create([
+            'subcategory_id' => $subcategoryColor->id,
+            'brand_id' => $brand->id
+        ]);
+        $product2Color = Color::create(['name' => 'Verde']);
+        $product2->colors()->attach([
+            $product2Color->id => [
+                'quantity' => 5
+            ]
+        ]);
+
+
+        $subcategoryColorSize = Subcategory::factory()->create([
+            'color' => true,
+            'size' => true
+        ]);
+        $product3 = Product::factory()->create([
+            'subcategory_id' => $subcategoryColorSize->id,
+            'brand_id' => $brand->id
+        ]);
+        $product3Color = Color::create(['name' => 'Naranja']);
+        $product3Color2 = Color::create(['name' => 'Azul']);
+        $product3->colors()->attach([
+            $product3Color->id => [
+                'quantity' => 10
+            ],
+            $product3Color2->id => [
+                'quantity' => 10
+            ]
+        ]);
+        $product3Size = Size::create([
+            'name' => 'Talla XXL',
+            'product_id' => $product3->id
+        ]);
+        $product3->sizes()->create([
+            'name' => $product3Size->name
+        ]);
+        $product3Size->colors()->attach([
+            1 => ['quantity' => 10],
+            2 => ['quantity' => 10],
+        ]);
+
+        for ($i = 1; $i <= 3; $i++) {
+            Image::factory()->create([
+                'imageable_id' => $i,
+                'imageable_type' => Product::class
+            ]);
+        }
+
+        $this->browse(function (Browser $browser) use ($product1, $product2, $product3) {
+
+            $browser->visit('/products/' . $product1->slug)
+                ->pause(1000)
+                ->assertSeeIn('@product_stock', $product1->stock)
+                ->screenshot('s3-t5-product')
+                ->pause(300);
+
+            $browser->visit('/products/' . $product2->slug)
+                ->pause(1000)
+                ->assertSeeIn('@product_stock', $product2->stock)
+                ->screenshot('s3-t5-product-color')
+                ->pause(300);
+
+            $browser->visit('/products/' . $product3->slug)
+                ->pause(1000)
+                ->assertSeeIn('@product_stock', $product3->stock)
+                ->screenshot('s3-t5-product-color-size')
+                ->pause(300);
         });
     }
 }

@@ -1,14 +1,14 @@
 <div x-data>
     <p class="text-xl text-gray-700">Color:</p>
 
-    <select wire:model="color_id" class="form-control w-full">
+    <select dusk="porduct_color_select" wire:model="color_id" class="form-control w-full">
         <option value="" selected disabled>Seleccionar un color</option>
         @foreach ($colors as $color)
             <option value="{{$color->id}}">{{ __(ucfirst($color->name)) }}</option>
         @endforeach
     </select>
 
-    <p class="text-gray-700 my-4">
+    <p dusk="product_stock" class="text-gray-700 my-4">
         <span class="font-semibold text-lg">Stock disponible:</span>
         @if($quantity)
             {{ $quantity }}
