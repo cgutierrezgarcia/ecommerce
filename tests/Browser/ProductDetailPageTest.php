@@ -92,6 +92,7 @@ class ProductDetailPageTest extends DuskTestCase
                 ->pause(1000)
                 ->press('-')
                 ->assertSee('AGREGAR AL CARRITO DE COMPRAS')
+                ->resize(1920, 1080)
                 ->screenshot('s2-t7');
         });
     }
@@ -132,6 +133,7 @@ class ProductDetailPageTest extends DuskTestCase
 
             $browser->pause(1000)
                 ->assertSeeIn('@product_qty', $product->quantity)
+                ->resize(1920, 1080)
                 ->screenshot('s2-t8');
         });
     }

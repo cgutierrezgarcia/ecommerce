@@ -9,6 +9,7 @@ use App\Models\Image;
 use App\Models\Product;
 use App\Models\Size;
 use App\Models\Subcategory;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
@@ -161,6 +162,7 @@ class ShoppingCartPageTest extends DuskTestCase
                 ->press('+')
                 ->pause(200)
                 ->assertSeeIn('@shopping_cart_page_product_qty', $product->quantity)
+                ->resize(1920, 1080)
                 ->screenshot('s3-t4');
         });
     }
@@ -265,6 +267,55 @@ class ShoppingCartPageTest extends DuskTestCase
                 ->pause(400)
                 ->assertDontSee($product->name)
                 ->screenshot('s3-t9-empty');
+        });
+    }
+
+    /** @test */
+    public function it_saved_the_cart_in_the_db_when_logout_and_is_retrieved_when_login() {
+        $user = User::factory()->create();
+
+        $category = Category::factory()->create();
+
+        $brand = Brand::factory()->create();
+        $category->brands()->attach($brand->id);
+
+        $subcategory = Subcategory::factory()->create([
+            'color' => false,
+            'size' => false
+        ]);
+
+        $product = Product::factory()->create([
+            'subcategory_id' => $subcategory->id,
+            'brand_id' => $brand->id,
+            'quantity' => 5,
+            'price' => 100
+        ]);
+        Image::factory()->create([
+            'imageable_id' => $product->id,
+            'imageable_type' => Product::class
+        ]);
+
+        $this->browse(function ($browser) use ($user, $product) {
+            $browser->loginAs(User::find($user->id))
+                ->pause(1000)
+                ->visit('/products/' . $product->slug)
+                ->pause(1000)
+                ->press('AGREGAR AL CARRITO DE COMPRAS')
+                ->pause(300)
+                ->click('@registered_user_img')
+                ->pause(1000)
+                ->clickLink('Finalizar sesión')
+                ->pause(1000)
+                ->visit('/shopping-cart')
+                ->pause(1000)
+                ->assertDontsee($product->name)
+                ->screenshot('s3-t11-unregistered-user')
+                ->loginAs(User::find($user->id))
+                ->pause(1000)
+                ->visit('/shopping-cart')
+                ->pause(1000)
+                ->assertsee($product->name)
+                ->screenshot('s3-t11-registered-user');
         });
     }
 }
