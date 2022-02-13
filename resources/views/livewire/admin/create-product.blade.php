@@ -4,7 +4,7 @@
     <div class="grid grid-cols-2">
         <div>
             <x-jet-label value="Categorías" />
-            <select class="w-full form-control" wire:model="category_id">
+            <select dusk="category" class="w-full form-control" wire:model="category_id">
                 <option value="" selected disabled>Seleccione una categoría</option>
                 @foreach($categories as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -14,7 +14,7 @@
         </div>
         <div>
             <x-jet-label value="Subcategorías" />
-            <select class="w-full form-control" wire:model="subcategory_id">
+            <select dusk="subcategory" class="w-full form-control" wire:model="subcategory_id">
                 <option value="" selected disabled>Seleccione una subcategoría</option>
                 @foreach($subcategories as $subcategory)
                     <option value="{{ $subcategory->id }}">{{ $subcategory->name }}</option>
@@ -28,6 +28,7 @@
         <div class="mb-4">
             <x-jet-label value="Nombre" />
             <x-jet-input type="text"
+                         dusk="name"
                          class="w-full"
                          wire:model="name"
                          placeholder="Ingrese el nombre del producto" />
@@ -38,6 +39,7 @@
     <div class="mb-4">
         <x-jet-label value="Slug" />
         <x-jet-input type="text"
+                     dusk="slug"
                      disabled
                      wire:model="slug"
                      class="w-full bg-gray-200"
@@ -49,6 +51,7 @@
         <div wire:ignore>
             <x-jet-label value="Descripción" />
             <textarea class="w-full form-control" rows="4"
+                      dusk="description"
                       wire:model="description"
                       x-data
                       x-init="ClassicEditor.create($refs.miEditor)
@@ -69,7 +72,7 @@
     <div class="grid grid-cols-2 gap-6 mb-4">
         <div class="mb-4">
             <x-jet-label value="Marca" />
-            <select class="form-control w-full" wire:model="brand_id">
+            <select dusk="brand" class="form-control w-full" wire:model="brand_id">
                 <option value="" selected disabled>Seleccione una marca</option>
                 @foreach ($brands as $brand)
                     <option value="{{$brand->id}}">{{$brand->name}}</option>
@@ -81,6 +84,7 @@
         <div>
             <x-jet-label value="Precio" />
             <x-jet-input
+                dusk="price"
                 wire:model="price"
                 type="number"
                 class="w-full"
@@ -93,6 +97,7 @@
         <div>
             <x-jet-label value="Cantidad" />
             <x-jet-input
+                dusk="quantity"
                 wire:model="quantity"
                 type="number"
                 class="w-full" />

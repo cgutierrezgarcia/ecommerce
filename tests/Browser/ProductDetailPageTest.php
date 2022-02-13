@@ -279,4 +279,39 @@ class ProductDetailPageTest extends DuskTestCase
                 ->pause(300);
         });
     }
+
+    /** @test */
+    public function it_changes_the_product_stock_when_adding_a_product_to_the_cart()
+    {
+        $category = Category::factory()->create();
+
+        $brand = Brand::factory()->create();
+        $category->brands()->attach($brand->id);
+
+        $subcategory = Subcategory::factory()->create([
+            'color' => false,
+            'size' => false
+        ]);
+
+        $product = Product::factory()->create([
+            'subcategory_id' => $subcategory->id,
+            'brand_id' => $brand->id,
+            'quantity' => 10
+        ]);
+        Image::factory()->create([
+            'imageable_id' => $product->id,
+            'imageable_type' => Product::class
+        ]);
+
+        $this->browse(function (Browser $browser) use ($product) {
+
+            $browser->visit('/products/' . $product->slug)
+                ->pause(1000)
+                ->assertSeeIn('@product_stock', 10)
+                ->press('AGREGAR AL CARRITO DE COMPRAS')
+                ->pause(300)
+                ->assertSeeIn('@product_stock', 10 -1)
+                ->screenshot('s4-t4');
+        });
+    }
 }

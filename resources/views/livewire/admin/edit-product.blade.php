@@ -47,7 +47,7 @@
             <div class="grid grid-cols-2">
                 <div>
                     <x-jet-label value="Categorías" />
-                    <select class="w-full form-control" wire:model="category_id">
+                    <select dusk="category" class="w-full form-control" wire:model="category_id">
                         <option value="" selected disabled>Seleccione una categoría</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -57,7 +57,7 @@
                 </div>
                 <div>
                     <x-jet-label value="Subcategorías" />
-                    <select class="w-full form-control" wire:model="product.subcategory_id">
+                    <select dusk="subcategory" class="w-full form-control" wire:model="product.subcategory_id">
                         <option value="" selected disabled>Seleccione una subcategoría</option>
                         @foreach($subcategories as $subcategory)
                             <option value="{{ $subcategory->id }}">{{ $subcategory->name }}</option>
@@ -71,6 +71,7 @@
                 <div class="mb-4">
                     <x-jet-label value="Nombre" />
                     <x-jet-input type="text"
+                                 dusk="name"
                                  class="w-full"
                                  wire:model="product.name"
                                  placeholder="Ingrese el nombre del producto" />
@@ -81,6 +82,7 @@
             <div class="mb-4">
                 <x-jet-label value="Slug" />
                 <x-jet-input type="text"
+                             dusk="slug"
                              disabled
                              wire:model="product.slug"
                              class="w-full bg-gray-200"
@@ -112,7 +114,7 @@
             <div class="grid grid-cols-2 gap-6 mb-4">
                 <div class="mb-4">
                     <x-jet-label value="Marca" />
-                    <select class="form-control w-full" wire:model="product.brand_id">
+                    <select dusk="brand" class="form-control w-full" wire:model="product.brand_id">
                         <option value="" selected disabled>Seleccione una marca</option>
                         @foreach ($brands as $brand)
                             <option value="{{$brand->id}}">{{$brand->name}}</option>
@@ -124,6 +126,7 @@
                 <div>
                     <x-jet-label value="Precio" />
                     <x-jet-input
+                        dusk="price"
                         wire:model="product.price"
                         type="number"
                         class="w-full"
@@ -136,6 +139,7 @@
                 <div>
                     <x-jet-label value="Cantidad" />
                     <x-jet-input
+                        dusk="quantity"
                         wire:model="product.quantity"
                         type="number"
                         class="w-full" />
