@@ -83,10 +83,23 @@
             </div>
         @endif
 
-        @if($products->hasPages())
-            <div class="px-6 py-4">
-                {{ $products->links() }}
+        <div class="flex">
+            <div class="p-4">
+                <select class="form-control" wire:model="paginate">
+                    <option value="5">Mostrar 5 productos</option>
+                    <option value="10" selected>Mostrar 10 productos</option>
+                    <option value="25">Mostrar 25 productos</option>
+                    <option value="50">Mostrar 50 productos</option>
+                    <option value="100">Mostrar 100 productos</option>
+                </select>
             </div>
-        @endif
+
+            @if($products->hasPages())
+                <div class="px-6 py-4">
+                    {{ $products->links() }}
+                </div>
+            @endif
+        </div>
+
     </x-table-responsive>
 </div>
