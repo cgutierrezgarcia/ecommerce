@@ -22,7 +22,10 @@
     },
     "dependencies": {
         "@ckeditor/ckeditor5-build-classic": "^32.0.0",
+        "@fortawesome/fontawesome-free": "^6.0.0",
         "dropzone": "^6.0.0-beta.2",
-        "sweetalert2": "^11.4.0"
+        "flexslider": "^2.7.2",
+        "glider-js": "^1.7.7",
+        "sweetalert2": "^11.4.4"
     }
 }

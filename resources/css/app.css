@@ -3,6 +3,13 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 */
+@import url('dropzone/dist/dropzone.css');
+@import url('glider-js/glider.min.css');
+@import url('sweetalert2/dist/sweetalert2.css');
+/*
+@import url('@fortawesome/fontawesome-free/css/all.css');
+@import url('flexslider/flexslider.css');
+*/
 
 @tailwind base;
 @tailwind components;
@@ -23,4 +30,3 @@
         @apply border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm;
     }
 }
-
