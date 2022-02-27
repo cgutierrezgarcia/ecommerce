@@ -27,16 +27,46 @@
                 <thead class="bg-gray-50">
                 <tr>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        ID
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Nombre
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Slug
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Descripción
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Categoría
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Subcategoría
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Marca
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Estado
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Precio
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Color y cantidad
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Talla y cantidad
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Cantidad total
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Fecha de creación
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Fecha de actualización
                     </th>
                     <th scope="col" class="relative px-6 py-3">
                         <span class="sr-only">Editar</span>
@@ -46,6 +76,9 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                 @foreach($products as $product)
                     <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $product->id }}</div>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10 object-cover">
@@ -59,8 +92,19 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $product->slug }}</div>
+                        </td>
+                        <td class="px-6 py-4 block w-72 h-24 overflow-y-auto">
+                            <div class="text-sm text-gray-900">{{ $product->description }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->subcategory->category->name }}</div>
-                            <div class="text-sm text-gray-500">{{ $product->subcategory->name }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $product->subcategory->name }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $product->brand->name }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $product->status == 1 ? 'red' : 'green' }}-100 text-{{ $product->status == 1 ? 'red' : 'green' }}-800">
@@ -69,6 +113,53 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $product->price }} &euro;
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 block h-24 overflow-x-auto overflow-y-auto">
+                            @if ($product->subcategory->size)
+                                @foreach($product->sizes as $size)
+                                    <span class="font-bold">{{ $size->name }}</span><br/>
+                                    @foreach($size->colors as $color)
+                                        {{ __(ucfirst($color->name)) }} ({{ $color->pivot->quantity }})<br/>
+                                    @endforeach
+                                    <br/>
+                                @endforeach
+                            @elseif($product->subcategory->color)
+                                @foreach($product->colors as $color)
+                                    {{ __(ucfirst($color->name)) }} ({{ $color->pivot->quantity }})<br/>
+                                @endforeach
+                            @else
+                                <br/>No tiene
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 h-24 overflow-x-auto overflow-y-auto">
+                            @if ($product->subcategory->size)
+                                @foreach($product->sizes as $size)
+                                    @php
+                                    $quantity = 0;
+                                    foreach($size->colors as $color) {
+                                        $quantity += $color->pivot->quantity;
+                                    }
+                                    @endphp
+                                    {{ $size->name }} ({{ $quantity }})<br/>
+                                @endforeach
+                            @else
+                                No tiene
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            @if ($product->subcategory->size)
+                                {{ $product->stock }}
+                            @elseif($product->subcategory->color)
+                                {{ $product->stock }}
+                            @else
+                                {{ $product->quantity }}
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $product->created_at }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $product->updated_at }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <a href="{{ route('admin.products.edit', $product) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
