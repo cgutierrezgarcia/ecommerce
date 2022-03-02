@@ -2084,6 +2084,7 @@ to{transform:rotate(360deg)}}
 .bg-green-400{--tw-bg-opacity:1;background-color:rgb(74 222 128 / var(--tw-bg-opacity))}
 .bg-gray-200\/80{background-color:rgb(229 231 235 / 0.8)}
 .bg-gray-300\/80{background-color:rgb(209 213 219 / 0.8)}
+.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity))}
 .bg-opacity-25{--tw-bg-opacity:0.25}
 .bg-opacity-75{--tw-bg-opacity:0.75}
 .bg-opacity-100{--tw-bg-opacity:1}
