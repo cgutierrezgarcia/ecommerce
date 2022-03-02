@@ -14,61 +14,83 @@
     </div>
 
     <x-table-responsive>
-        <div class="px-6 py-4">
-            <x-jet-input class="w-full"
-                         dusk="search"
-                         wire:model="search"
-                         type="text"
-                         placeholder="Introduzca el nombre del producto a buscar" />
+        <div class="flex">
+            <div class="px-6 py-4 w-1/3">
+                <x-jet-input class="w-full"
+                             dusk="search"
+                             wire:model="search"
+                             type="text"
+                             placeholder="Introduzca el nombre del producto a buscar" />
+            </div>
+
+            <div class="relative py-5">
+                <x-button wire:click="$toggle('show')" color="{{ $show ? 'red' : 'orange' }}" class="ml-auto">Mostrar/ocultar columnas</x-button>
+                <div class="{{ $show ? '' : 'hidden' }} absolute grid bg-white rounded-md p-4 mt-4 shadow-2xl">
+                    <x-button wire:click="$toggle('idSH')" color="{{ $idSH ? 'red' : 'green' }}" class="mb-2">ID</x-button>
+                    <x-button wire:click="$toggle('nameSH')" color="{{ $nameSH ? 'red' : 'green' }}" class="mb-2">Nombre</x-button>
+                    <x-button wire:click="$toggle('slugSH')" color="{{ $slugSH ? 'red' : 'green' }}" class="mb-2">Slug</x-button>
+                    <x-button wire:click="$toggle('descriptionSH')" color="{{ $descriptionSH ? 'red' : 'green' }}" class="mb-2">Descripción</x-button>
+                    <x-button wire:click="$toggle('categorySH')" color="{{ $categorySH ? 'red' : 'green' }}" class="mb-2">Categoría</x-button>
+                    <x-button wire:click="$toggle('subcategorySH')" color="{{ $subcategorySH ? 'red' : 'green' }}" class="mb-2">Subcategoría</x-button>
+                    <x-button wire:click="$toggle('brandSH')" color="{{ $brandSH ? 'red' : 'green' }}" class="mb-2">Marca</x-button>
+                    <x-button wire:click="$toggle('statusSH')" color="{{ $statusSH ? 'red' : 'green' }}" class="mb-2">Estado</x-button>
+                    <x-button wire:click="$toggle('priceSH')" color="{{ $priceSH ? 'red' : 'green' }}" class="mb-2">Precio</x-button>
+                    <x-button wire:click="$toggle('colorSH')" color="{{ $colorSH ? 'red' : 'green' }}" class="mb-2">Color y cantidad</x-button>
+                    <x-button wire:click="$toggle('sizeSH')" color="{{ $sizeSH ? 'red' : 'green' }}" class="mb-2">Talla y cantidad</x-button>
+                    <x-button wire:click="$toggle('stockSH')" color="{{ $stockSH ? 'red' : 'green' }}" class="mb-2">Cantidad total</x-button>
+                    <x-button wire:click="$toggle('createdAtSH')" color="{{ $createdAtSH ? 'red' : 'green' }}" class="mb-2">Fecha de creación</x-button>
+                    <x-button wire:click="$toggle('updatedAtSH')" color="{{ $updatedAtSH ? 'red' : 'green' }}">Fecha de actualización</x-button>
+                </div>
+            </div>
         </div>
 
         @if($products->count())
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                 <tr>
-                    <th wire:click="orderByColumn('id')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('id')" scope="col" class="{{ $idSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         ID
                     </th>
-                    <th wire:click="orderByColumn('name')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('name')" scope="col" class="{{ $nameSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Nombre
                     </th>
-                    <th wire:click="orderByColumn('slug')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('slug')" scope="col" class="{{ $slugSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Slug
                     </th>
-                    <th wire:click="orderByColumn('description')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('description')" scope="col" class="{{ $descriptionSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Descripción
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="{{ $categorySH ? 'hidden' : '' }} px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Categoría
                     </th>
-                    <th wire:click="orderByColumn('subcategory_id')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('subcategory_id')" scope="col" class="{{ $subcategorySH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Subcategoría
                     </th>
-                    <th wire:click="orderByColumn('brand_id')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('brand_id')" scope="col" class="{{ $brandSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Marca
                     </th>
-                    <th wire:click="orderByColumn('status')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('status')" scope="col" class="{{ $statusSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Estado
                     </th>
-                    <th wire:click="orderByColumn('price')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('price')" scope="col" class="{{ $priceSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Precio
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="{{ $colorSH ? 'hidden' : '' }} px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Color y cantidad
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="{{ $sizeSH ? 'hidden' : '' }} px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Talla y cantidad
                     </th>
-                    <th wire:click="orderByColumn('quantity')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('quantity')" scope="col" class="{{ $stockSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Cantidad total
                     </th>
-                    <th wire:click="orderByColumn('created_at')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('created_at')" scope="col" class="{{ $createdAtSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Fecha de creación
                     </th>
-                    <th wire:click="orderByColumn('updated_at')" scope="col" class="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th wire:click="orderByColumn('updated_at')" scope="col" class="{{ $updatedAtSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Fecha de actualización
                     </th>
-                    <th scope="col" class="relative px-6 py-3">
+                    <th scope="col" class="{{ $editSH ? 'hidden' : '' }} relative px-6 py-3">
                         <span class="sr-only">Editar</span>
                     </th>
                 </tr>
@@ -76,10 +98,10 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                 @foreach($products as $product)
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $idSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->id }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $nameSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10 object-cover">
                                     <img class="h-10 w-10 rounded-full" src="{{ $product->images->count() ? Storage::url($product->images->first()->url) : 'img/default.png' }}" alt="">
@@ -91,30 +113,30 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $slugSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->slug }}</div>
                         </td>
-                        <td class="px-6 py-4 block w-72 h-24 overflow-y-auto">
+                        <td class="{{ $descriptionSH ? 'hidden' : '' }} px-6 py-4 block w-72 h-24 overflow-y-auto">
                             <div class="text-sm text-gray-900">{{ $product->description }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $categorySH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->subcategory->category->name }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $subcategorySH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->subcategory->name }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $brandSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->brand->name }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $statusSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $product->status == 1 ? 'red' : 'green' }}-100 text-{{ $product->status == 1 ? 'red' : 'green' }}-800">
                                 {{ $product->status == 1 ? 'Borrador' : 'Publicado' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td class="{{ $priceSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $product->price }} &euro;
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 block h-24 overflow-x-auto overflow-y-auto">
+                        <td class="{{ $colorSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap text-sm text-gray-500 block h-24 overflow-x-auto overflow-y-auto">
                             @if ($product->subcategory->size)
                                 @foreach($product->sizes as $size)
                                     <span class="font-bold">{{ $size->name }}</span><br/>
@@ -131,7 +153,7 @@
                                 <br/>No tiene
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 h-24 overflow-x-auto overflow-y-auto">
+                        <td class="{{ $sizeSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap text-sm text-gray-500 h-24 overflow-x-auto overflow-y-auto">
                             @if ($product->subcategory->size)
                                 @foreach($product->sizes as $size)
                                     @php
@@ -146,7 +168,7 @@
                                 No tiene
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td class="{{ $stockSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             @if ($product->subcategory->size)
                                 {{ $product->stock }}
                             @elseif($product->subcategory->color)
@@ -155,13 +177,13 @@
                                 {{ $product->quantity }}
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $createdAtSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->created_at }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="{{ $updatedAtSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->updated_at }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <td class="{{ $editSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <a href="{{ route('admin.products.edit', $product) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
                         </td>
                     </tr>

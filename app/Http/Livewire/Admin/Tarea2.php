@@ -16,6 +16,11 @@ class Tarea2 extends Component
     public $order = 'asc';
     public $orderColumn = 'id';
 
+    public $show = false;
+    public $idSH, $nameSH, $slugSH, $descriptionSH, $categorySH,
+        $subcategorySH, $brandSH, $statusSH, $priceSH, $colorSH,
+        $sizeSH, $stockSH, $createdAtSH, $updatedAtSH, $editSH = true;
+
     public function updatingSearch()
     {
         $this->resetPage();
