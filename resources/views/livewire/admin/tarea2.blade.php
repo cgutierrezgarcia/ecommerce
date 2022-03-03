@@ -13,6 +13,79 @@
         </x-slot>
     </div>
 
+    <div class="{{ $showFilters ? '' : 'hidden' }} bg-gray-200 mx-auto max-w-screen-xl p-7 mt-10 rounded-lg">
+        <div class="grid grid-cols-4">
+            <div class="px-6 py-4 w-1/3">
+                <x-jet-label value="Categoría" />
+                <x-jet-input wire:model="categorySearch"
+                             type="text"
+                             placeholder="Categoría" />
+            </div>
+
+            <div class="px-6 py-4 w-1/3">
+                <x-jet-label value="Subcategoría" />
+                <x-jet-input wire:model="subcategorySearch"
+                             type="text"
+                             placeholder="Subcategoría" />
+            </div>
+
+            <div class="px-6 py-4 w-1/3">
+                <x-jet-label value="Marca" />
+                <x-jet-input wire:model="brandSearch"
+                             type="text"
+                             placeholder="Marca" />
+            </div>
+
+            <div class="p-4">
+                <x-jet-label value="Estado" />
+                <select class="form-control" wire:model="status">
+                    <option value="" selected>Cualquiera</option>
+                    <option value="1">BORRADOR</option>
+                    <option value="2">PUBLICADO</option>
+                </select>
+            </div>
+
+            <div class="px-6 py-4 w-1/3">
+                <x-jet-label value="Precio mínimo" />
+                <x-jet-input wire:model="minPriceSearch"
+                             type="text"
+                             placeholder="Precio mínimo" />
+            </div>
+            <div class="px-6 py-4 w-1/3">
+                <x-jet-label value="Precio máximo" />
+                <x-jet-input wire:model="maxPriceSearch"
+                             type="text"
+                             placeholder="Precio máximo" />
+            </div>
+
+            <div class="px-6 py-4 w-1/3">
+                <x-jet-label value="Fecha mínima" />
+                <x-jet-input wire:model="minDateSearch"
+                             type="text"
+                             placeholder="Fecha mínima" />
+            </div>
+            <div class="px-6 py-4 w-1/3">
+                <x-jet-label value="Fecha máxima" />
+                <x-jet-input wire:model="maxDateSearch"
+                             type="text"
+                             placeholder="Fecha máxima" />
+            </div>
+
+            <div class="{{ $sizeFilter ? 'hidden' : '' }} px-6 py-4">
+                <x-button wire:click="$toggle('colorsFilter')" color="{{ $colorsFilter ? 'green' : 'red' }}" class="ml-auto">colores</x-button>
+            </div>
+
+            <div class="{{ $colorsFilter ? 'hidden' : '' }} px-6 py-4">
+                <x-button wire:click="$toggle('sizeFilter')" color="{{ $sizeFilter ? 'green' : 'red' }}" class="ml-auto">Tallas</x-button>
+            </div>
+        </div>
+        <div class="px-6 py-4">
+            <x-jet-button class="mt-4" wire:click="resetFilters">
+                Eliminar Filtros
+            </x-jet-button>
+        </div>
+    </div>
+
     <x-table-responsive>
         <div class="flex bg-gray-200">
             <div class="px-6 py-4 w-1/3">
@@ -46,57 +119,6 @@
             <div class="relative py-5 ml-4">
                 <x-button wire:click="$toggle('showFilters')" color="{{ $show ? 'red' : 'orange' }}">Filtros</x-button>
             </div>
-        </div>
-
-        <div class="{{ $showFilters ? '' : 'hidden' }} bg-gray-200">
-            <div class="px-6 py-4 w-1/3">
-                <x-jet-label value="Categoría" />
-                <x-jet-input wire:model="categorySearch"
-                             type="text"
-                             placeholder="Categoría" />
-            </div>
-
-            <div class="px-6 py-4 w-1/3">
-                <x-jet-label value="Subcategoría" />
-                <x-jet-input wire:model="subcategorySearch"
-                             type="text"
-                             placeholder="Subcategoría" />
-            </div>
-
-            <div class="px-6 py-4 w-1/3">
-                <x-jet-label value="Marca" />
-                <x-jet-input wire:model="brandSearch"
-                             type="text"
-                             placeholder="Marca" />
-            </div>
-
-            <div class="p-4">
-                <x-jet-label value="Estado" />
-                <select class="form-control" wire:model="status">
-                    <option value="" selected>Cualquiera</option>
-                    <option value="1">BORRADOR</option>
-                    <option value="2">PUBLICADO</option>
-                </select>
-            </div>
-
-            <div class="px-6 py-4 w-1/3">
-                <x-jet-label value="Precio" />
-                <x-jet-input wire:model="priceSearch"
-                             type="text"
-                             placeholder="Precio" />
-            </div>
-
-            <div class="{{ $sizeFilter ? 'hidden' : '' }}">
-                <x-button wire:click="$toggle('colorsFilter')" color="{{ $colorsFilter ? 'green' : 'red' }}" class="ml-auto">colores</x-button>
-            </div>
-
-            <div class="{{ $colorsFilter ? 'hidden' : '' }}">
-                <x-button wire:click="$toggle('sizeFilter')" color="{{ $sizeFilter ? 'green' : 'red' }}" class="ml-auto">Tallas</x-button>
-            </div>
-
-            <x-jet-button class="mt-4" wire:click="resetFilters">
-                Eliminar Filtros
-            </x-jet-button>
         </div>
 
          @if($products->count())

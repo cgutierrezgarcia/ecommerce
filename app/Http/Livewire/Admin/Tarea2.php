@@ -22,8 +22,18 @@ class Tarea2 extends Component
         $subcategorySH, $brandSH, $statusSH, $priceSH, $colorSH,
         $sizeSH, $stockSH, $createdAtSH, $updatedAtSH, $editSH = true;
 
-    public $showFilters = true;
-    public $categorySearch, $subcategorySearch, $brandSearch, $status, $priceSearch, $colorsFilter, $sizeFilter;
+    public $showFilters = false;
+    public $categorySearch, $subcategorySearch, $brandSearch, $status,
+        $minPriceSearch, $maxPriceSearch, $colorsFilter, $sizeFilter,
+        $minDateSearch, $maxDateSearch;
+
+    public function mount() {
+        $this->minPriceSearch = Product::all('price')->min()->price;
+        $this->maxPriceSearch = Product::all('price')->max()->price;
+
+        $this->minDateSearch = date(Product::all('created_at')->min()->created_at);
+        $this->maxDateSearch = date(Product::all('created_at')->max()->created_at);
+    }
 
     public function updatingSearch()
     {
@@ -45,7 +55,17 @@ class Tarea2 extends Component
 
     public function resetFilters()
     {
-        $this->reset(['search', 'categorySearch', 'subcategorySearch', 'brandSearch', 'status', 'priceSearch', 'colorsFilter', 'sizeFilter', 'page']);
+        $this->reset([
+            'search', 'categorySearch', 'subcategorySearch', 'brandSearch',
+            'status', 'minPriceSearch', 'maxPriceSearch', 'colorsFilter',
+            'sizeFilter', 'minDateSearch', 'maxDateSearch', 'page',
+        ]);
+
+        $this->minPriceSearch = Product::all('price')->min()->price;
+        $this->maxPriceSearch = Product::all('price')->max()->price;
+
+        $this->minDateSearch = date(Product::all('created_at')->min()->created_at);
+        $this->maxDateSearch = date(Product::all('created_at')->max()->created_at);
     }
 
     public function render()
@@ -76,8 +96,9 @@ class Tarea2 extends Component
             $products = $products->where('status', $this->status);
         }
 
-        if ($this->priceSearch) {
-            $products = $products->where('price', 'LIKE', "%{$this->priceSearch}%");
+        if ($this->minPriceSearch || $this->maxPriceSearch) {
+            $products = $products
+                ->whereBetween('price', [$this->minPriceSearch, $this->maxPriceSearch]);
         }
 
         if ($this->colorsFilter) {
@@ -86,6 +107,11 @@ class Tarea2 extends Component
 
         if ($this->sizeFilter) {
             $products = $products->whereHas('sizes');
+        }
+
+        if ($this->minDateSearch || $this->maxDateSearch) {
+            $products = $products
+                ->whereBetween('created_at', [date($this->minDateSearch), date($this->maxDateSearch)]);
         }
 
         $products = $products->orderBy($this->orderColumn, $this->order)->paginate($this->paginate);
