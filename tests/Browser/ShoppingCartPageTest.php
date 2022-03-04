@@ -277,6 +277,7 @@ class ShoppingCartPageTest extends DuskTestCase
         });
     }
 
+    // Inicio ejercicio 2
     /** @test */
     public function it_saved_the_cart_in_the_db_when_logout_and_is_retrieved_when_login() {
         $user = $this->createUser();
@@ -286,30 +287,50 @@ class ShoppingCartPageTest extends DuskTestCase
         $brand = $this->createBrand();
         $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = $this->createSubcategory($category->id);
-        $product = $this->createProduct($subcategory->id, $brand->id);
+        $subcategory1 = $this->createSubcategory($category->id);
+        $subcategory2 = $this->createSubcategory($category->id, true);
 
-        $this->browse(function ($browser) use ($user, $product) {
+        $product1 = $this->createProduct($subcategory1->id, $brand->id);
+
+        $product2 = $this->createProduct($subcategory2->id, $brand->id);
+        $color = $this->createColor();
+        $this->attachColorToProduct($product2->id, $color->id);
+
+        $this->browse(function ($browser) use ($user, $product1, $product2) {
             $browser->loginAs(User::find($user->id))
                 ->pause(1000)
-                ->visit('/products/' . $product->slug)
+                ->visit('/products/' . $product1->slug)
                 ->pause(1000)
                 ->press('AGREGAR AL CARRITO DE COMPRAS')
                 ->pause(300)
+                ->visit('/products/' . $product2->slug)
+                ->pause(1000)
+                ->select('@porduct_color_select', 1)
+                ->pause(300)
+                ->press('+')
+                ->pause(300)
+                ->press('AGREGAR AL CARRITO DE COMPRAS')
                 ->click('@registered_user_img')
                 ->pause(1000)
                 ->clickLink('Finalizar sesión')
                 ->pause(1000)
                 ->visit('/shopping-cart')
                 ->pause(1000)
-                ->assertDontsee($product->name)
+                ->assertDontsee($product1->name)
+                ->assertDontsee($product2->name)
                 ->screenshot('s3-t11-unregistered-user')
                 ->loginAs(User::find($user->id))
                 ->pause(1000)
                 ->visit('/shopping-cart')
                 ->pause(1000)
-                ->assertsee($product->name)
+                ->assertsee($product1->name)
+                ->assertSeeIn('@shopping_cart_page_product_qty', 1)
+                ->assertSourceHas($product1->price)
+                ->assertsee($product2->name)
+                ->assertSeeIn('@shopping_cart_page_product_with_color_qty', 2)
+                ->assertSourceHas($product2->price)
                 ->screenshot('s3-t11-registered-user');
         });
     }
+    // Fin ejercicio 2
 }
