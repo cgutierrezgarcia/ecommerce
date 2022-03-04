@@ -2,15 +2,10 @@
 
 namespace Tests\Browser;
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Image;
-use App\Models\Product;
-use App\Models\Subcategory;
+
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
-use Spatie\Permission\Models\Role;
 use Tests\DuskTestCase;
 
 class AdminPageTest extends DuskTestCase
@@ -21,8 +16,8 @@ class AdminPageTest extends DuskTestCase
     public function the_search_input_filter_the_products_or_show_them_all_when_empty()
     {
         $this->createRole();
-
-        $user = User::factory()->create()->assignRole('admin');
+        $user = $this->createUser();
+        $this->assignRole($user->id, 'admin');
 
         $category = $this->createCategory();
 

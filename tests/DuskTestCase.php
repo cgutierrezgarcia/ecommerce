@@ -86,6 +86,11 @@ abstract class DuskTestCase extends BaseTestCase
         Role::create(['name' => $name]);
     }
 
+    public function assignRole($userId = 1, $roleName = 'admin')
+    {
+        User::find($userId)->assignRole($roleName);
+    }
+
     public function createBrand()
     {
         return Brand::factory()->create();

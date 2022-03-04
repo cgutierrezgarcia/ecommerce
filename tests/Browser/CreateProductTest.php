@@ -2,15 +2,9 @@
 
 namespace Tests\Browser;
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Image;
-use App\Models\Product;
-use App\Models\Subcategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
-use Spatie\Permission\Models\Role;
 use Tests\DuskTestCase;
 
 class CreateProductTest extends DuskTestCase
@@ -21,8 +15,8 @@ class CreateProductTest extends DuskTestCase
     public function it_checks_the_validation_and_creates_a_product()
     {
         $this->createRole();
-
-        $user = User::factory()->create()->assignRole('admin');
+        $user = $this->createUser();
+        $this->assignRole($user->id, 'admin');
 
         $category = $this->createCategory();
 
