@@ -21,21 +21,13 @@ class CreateOrderPageTest extends DuskTestCase
 
     /** @test */
     public function it_only_shows_create_order_page_to_a_registered_user() {
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        Subcategory::factory()->create([
-            'category_id' => $category->id,
-            'color' => false,
-            'size' => false
-        ]);
-        Subcategory::factory()->create([
-            'category_id' => $category->id,
-            'color' => false,
-            'size' => false
-        ]);
+        $this->createSubcategory($category->id);
+        $this->createSubcategory($category->id);
 
         $this->browse(function (Browser $browser) {
             $browser->visit('/orders/create')
@@ -45,7 +37,7 @@ class CreateOrderPageTest extends DuskTestCase
                 ->screenshot('s3-t10-unregistered-user');
         });
 
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
         $this->browse(function ($browser) use ($user) {
             $browser->loginAs(User::find($user->id))
@@ -59,23 +51,15 @@ class CreateOrderPageTest extends DuskTestCase
     }
     /** @test */
     public function it_shows_the_form_according_to_the_option_chosen_in_the_radio_btn() {
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        Subcategory::factory()->create([
-            'category_id' => $category->id,
-            'color' => false,
-            'size' => false
-        ]);
-        Subcategory::factory()->create([
-            'category_id' => $category->id,
-            'color' => false,
-            'size' => false
-        ]);
+        $this->createSubcategory($category->id);
+        $this->createSubcategory($category->id);
 
         $this->browse(function ($browser) use ($user) {
             $browser->loginAs(User::find($user->id))
@@ -98,28 +82,16 @@ class CreateOrderPageTest extends DuskTestCase
 
     /** @test */
     public function it_checks_that_the_order_is_created_and_destroys_the_cart_and_redirects_to_payment() {
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
 
-        $product = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id,
-            'quantity' => 5,
-            'price' => 100
-        ]);
-        Image::factory()->create([
-            'imageable_id' => $product->id,
-            'imageable_type' => Product::class
-        ]);
+        $product = $this->createProduct($subcategory->id, $brand->id);
 
         $this->browse(function ($browser) use ($user, $product) {
             $browser->loginAs(User::find($user->id))
@@ -145,36 +117,20 @@ class CreateOrderPageTest extends DuskTestCase
 
     /** @test */
     public function it_shows_that_the_chained_selects_are_loaded_correctly_depending_on_the_chosen_option() {
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
 
-        $product = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id,
-            'quantity' => 5,
-            'price' => 100
-        ]);
-        Image::factory()->create([
-            'imageable_id' => $product->id,
-            'imageable_type' => Product::class
-        ]);
+        $product = $this->createProduct($subcategory->id, $brand->id);
 
-        $department = Department::factory()->create();
-        $city = City::factory()->create([
-            'department_id' => $department->id
-        ]);
-        $district = District::factory()->create([
-            'city_id' => $city->id
-        ]);
+        $department = $this->createDepartment();
+        $city = $this->createCity($department->id);
+        $district = $this->createDistrict($city->id);
 
         $this->browse(function ($browser) use ($user, $product, $department, $city, $district) {
             $browser->loginAs(User::find($user->id))

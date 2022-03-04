@@ -2,13 +2,6 @@
 
 namespace Tests\Browser;
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Color;
-use App\Models\Image;
-use App\Models\Product;
-use App\Models\Size;
-use App\Models\Subcategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
@@ -25,84 +18,46 @@ class ShoppingCartPageTest extends DuskTestCase
      */
     public function it_adds_every_product_type_to_the_cart()
     {
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
-        $product1 = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
+        $product = $this->createProduct($subcategory->id, $brand->id);
 
 
-        $subcategoryColor = Subcategory::factory()->create([
-            'color' => true,
-            'size' => false
-        ]);
-        $product2 = Product::factory()->create([
-            'subcategory_id' => $subcategoryColor->id,
-            'brand_id' => $brand->id
-        ]);
-        $product2Color = Color::create(['name' => 'Verde']);
-        $product2->colors()->attach([
-            $product2Color->id => [
-                'quantity' => 10
-            ]
-        ]);
+        $subcategoryColor = $this->createSubcategory($category->id, true);
+        $productWithColor = $this->createProduct($subcategoryColor->id, $brand->id);
+
+        $color = $this->createColor();
+        $this->attachColorToProduct($productWithColor->id, $color->id);
 
 
-        $subcategoryColorSize = Subcategory::factory()->create([
-            'color' => true,
-            'size' => true
-        ]);
-        $product3 = Product::factory()->create([
-            'subcategory_id' => $subcategoryColorSize->id,
-            'brand_id' => $brand->id
-        ]);
-        $product3Color = Color::create(['name' => 'Naranja']);
-        $product3->colors()->attach([
-            $product3Color->id => [
-                'quantity' => 10
-            ]
-        ]);
-        $product3Size = Size::create([
-            'name' => 'Talla XXL',
-            'product_id' => $product3->id
-        ]);
-        $product3->sizes()->create([
-            'name' => $product3Size->name
-        ]);
-        $product3Size->colors()->attach([1 => ['quantity' => 10]]);
+        $subcategoryColorSize = $this->createSubcategory($category->id, true, true);
+        $productWithColorSize = $this->createProduct($subcategoryColorSize->id, $brand->id);
 
-        for ($i = 1; $i <= 3; $i++) {
-            Image::factory()->create([
-                'imageable_id' => $i,
-                'imageable_type' => Product::class
-            ]);
-        }
+        $color2 = $this->createColor('Verde');
+        $size = $this->createSize($productWithColorSize->id);
+        $this->attachSizeToColors($size->id);
+
 
         $this->browse(function (Browser $browser) use (
-            $product1, $product2, $product3) {
+            $product, $productWithColor, $productWithColorSize) {
 
-            $browser->visit('/products/' . $product1->slug)
+            $browser->visit('/products/' . $product->slug)
                 ->pause(1000)
                 ->press('AGREGAR AL CARRITO DE COMPRAS')
                 ->pause(300);
 
-            $browser->visit('/products/' . $product2->slug)
+            $browser->visit('/products/' . $productWithColor->slug)
                 ->pause(1000)
                 ->select('@porduct_color_select', 1)
                 ->pause(300)
                 ->press('AGREGAR AL CARRITO DE COMPRAS')
                 ->pause(300);
 
-            $browser->visit('/products/' . $product3->slug)
+            $browser->visit('/products/' . $productWithColorSize->slug)
                 ->pause(1000)
                 ->select('@porduct_size_select', 1)
                 ->pause(300)
@@ -112,41 +67,29 @@ class ShoppingCartPageTest extends DuskTestCase
                 ->pause(300);
 
             $browser->visit('/shopping-cart/')
-                ->assertSee($product1->name)
-                ->assertSee($product2->name)
-                ->assertSee($product3->name)
+                ->assertSee($product->name)
+                ->assertSee($productWithColor->name)
+                ->assertSee($productWithColorSize->name)
                 ->screenshot('s3-t1-t7');
         });
     }
 
     /** @test */
-    public function it_can_not_add_more_qty_than_a_product_has_in_stock()
+    public function it_can_not_add_more_qty_than_a_product_without_color_or_size_has_in_stock()
     {
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
-
-        $product = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id,
-            'quantity' => 5
-        ]);
-        Image::factory()->create([
-            'imageable_id' => $product->id,
-            'imageable_type' => Product::class
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
+        $product = $this->createProduct($subcategory->id, $brand->id);
 
         $this->browse(function (Browser $browser) use ($product) {
 
             $browser->visit('/products/' . $product->slug)
                 ->pause(1000)
-                ->resize(500, 1200);
+                ->resize(560, 1200);
 
             for ($i = 1; $i < $product->quantity +5; $i++) {
                 $browser->pause(200)
@@ -168,28 +111,105 @@ class ShoppingCartPageTest extends DuskTestCase
     }
 
     /** @test */
+    public function it_can_not_add_more_qty_than_a_product_with_color_has_in_stock()
+    {
+        $category = $this->createCategory();
+
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
+
+        $subcategory = $this->createSubcategory($category->id);
+
+        $subcategoryColor = $this->createSubcategory($category->id, true);
+        $productWithColor = $this->createProduct($subcategoryColor->id, $brand->id);
+
+        $color = $this->createColor();
+        $this->attachColorToProduct($productWithColor->id, $color->id);
+
+
+        $this->browse(function (Browser $browser) use ($productWithColor) {
+
+            $browser->visit('/products/' . $productWithColor->slug)
+                ->pause(1000)
+                ->select('@porduct_color_select', 1)
+                ->pause(300)
+                ->resize(560, 1200);
+
+            for ($i = 1; $i < $productWithColor->stock +5; $i++) {
+                $browser->pause(200)
+                    ->press('+');
+            }
+
+            $browser->pause(200)
+                ->press('AGREGAR AL CARRITO DE COMPRAS')
+                ->pause(200)
+                ->visit('/shopping-cart/')
+                ->pause(1000)
+                ->assertSeeIn('@shopping_cart_page_product_with_color_qty', $productWithColor->stock)
+                ->press('+')
+                ->pause(200)
+                ->assertSeeIn('@shopping_cart_page_product_with_color_qty', $productWithColor->stock)
+                ->resize(1920, 1080)
+                ->screenshot('s3-t4-color');
+        });
+    }
+
+    /** @test */
+    public function it_can_not_add_more_qty_than_a_product_with_size_and_color_has_in_stock()
+    {
+        $category = $this->createCategory();
+
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
+
+        $subcategoryColorSize = $this->createSubcategory($category->id, true, true);
+        $productWithColorSize = $this->createProduct($subcategoryColorSize->id, $brand->id);
+
+        $color2 = $this->createColor('Verde');
+        $size = $this->createSize($productWithColorSize->id);
+        $this->attachSizeToColors($size->id);
+
+        $this->browse(function (Browser $browser) use ($productWithColorSize) {
+
+            $browser->visit('/products/' . $productWithColorSize->slug)
+                ->pause(1000)
+                ->resize(560, 1200)
+                ->pause(300)
+                ->select('@porduct_size_select', 1)
+                ->pause(300)
+                ->select('@porduct_color_select', 1)
+                ->pause(300)
+                ->resize(500, 1200);
+
+            for ($i = 1; $i < $productWithColorSize->stock +5; $i++) {
+                $browser->pause(200)
+                    ->press('+');
+            }
+
+            $browser->pause(200)
+                ->press('AGREGAR AL CARRITO DE COMPRAS')
+                ->pause(200)
+                ->visit('/shopping-cart/')
+                ->pause(1000)
+                ->assertSeeIn('@shopping_cart_page_product_with_size_qty', $productWithColorSize->stock)
+                ->press('+')
+                ->pause(200)
+                ->assertSeeIn('@shopping_cart_page_product_with_size_qty', $productWithColorSize->stock)
+                ->resize(1920, 1080)
+                ->screenshot('s3-t4-size');
+        });
+    }
+
+    /** @test */
     public function it_changes_the_total_qty_when_the_products_qty_increases_or_decreases()
     {
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
-
-        $product = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id,
-            'quantity' => 5,
-            'price' => 100
-        ]);
-        Image::factory()->create([
-            'imageable_id' => $product->id,
-            'imageable_type' => Product::class
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
+        $product = $this->createProduct($subcategory->id, $brand->id);
 
         $this->browse(function (Browser $browser) use ($product) {
 
@@ -219,26 +239,13 @@ class ShoppingCartPageTest extends DuskTestCase
     /** @test */
     public function it_can_empty_the_cart_and_remove_a_product()
     {
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
-
-        $product = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id,
-            'quantity' => 5,
-            'price' => 100
-        ]);
-        Image::factory()->create([
-            'imageable_id' => $product->id,
-            'imageable_type' => Product::class
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
+        $product = $this->createProduct($subcategory->id, $brand->id);
 
         $this->browse(function (Browser $browser) use ($product) {
 
@@ -272,28 +279,15 @@ class ShoppingCartPageTest extends DuskTestCase
 
     /** @test */
     public function it_saved_the_cart_in_the_db_when_logout_and_is_retrieved_when_login() {
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
-
-        $product = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id,
-            'quantity' => 5,
-            'price' => 100
-        ]);
-        Image::factory()->create([
-            'imageable_id' => $product->id,
-            'imageable_type' => Product::class
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
+        $product = $this->createProduct($subcategory->id, $brand->id);
 
         $this->browse(function ($browser) use ($user, $product) {
             $browser->loginAs(User::find($user->id))

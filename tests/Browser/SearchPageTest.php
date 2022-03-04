@@ -2,11 +2,6 @@
 
 namespace Tests\Browser;
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Image;
-use App\Models\Product;
-use App\Models\Subcategory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
@@ -18,31 +13,15 @@ class SearchPageTest extends DuskTestCase
     /** @test */
     public function the_search_filter_the_products_or_show_them_all_when_empty()
     {
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
 
-        $product1 = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id
-        ]);
-        $product2 = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id
-        ]);
-
-        for ($i = 1; $i <= 2; $i++) {
-            Image::factory()->create([
-                'imageable_id' => $i,
-                'imageable_type' => Product::class
-            ]);
-        }
+        $product1 = $this->createProduct($subcategory->id, $brand->id);
+        $product2 = $this->createProduct($subcategory->id, $brand->id);
 
         $this->browse(function (Browser $browser) use ($product1, $product2) {
             $browser->visit('/search?name=' . $product1->name)
