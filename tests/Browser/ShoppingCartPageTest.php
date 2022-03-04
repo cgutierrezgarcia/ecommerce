@@ -5,11 +5,13 @@ namespace Tests\Browser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use Tests\CreateData;
 use Tests\DuskTestCase;
 
 class ShoppingCartPageTest extends DuskTestCase
 {
     use DatabaseMigrations;
+    use CreateData;
 
     /** @test
      *
@@ -77,21 +79,15 @@ class ShoppingCartPageTest extends DuskTestCase
     /** @test */
     public function it_can_not_add_more_qty_than_a_product_without_color_or_size_has_in_stock()
     {
-        $category = $this->createCategory();
+        $data = $this->createProducts();
 
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
+        $this->browse(function (Browser $browser) use ($data) {
 
-        $subcategory = $this->createSubcategory($category->id);
-        $product = $this->createProduct($subcategory->id, $brand->id);
-
-        $this->browse(function (Browser $browser) use ($product) {
-
-            $browser->visit('/products/' . $product->slug)
+            $browser->visit('/products/' . $data['product111slug'])
                 ->pause(1000)
                 ->resize(560, 1200);
 
-            for ($i = 1; $i < $product->quantity +5; $i++) {
+            for ($i = 1; $i < $data['product111quantity'] +5; $i++) {
                 $browser->pause(200)
                     ->press('+');
             }
@@ -101,10 +97,10 @@ class ShoppingCartPageTest extends DuskTestCase
                 ->pause(200)
                 ->visit('/shopping-cart/')
                 ->pause(1000)
-                ->assertSeeIn('@shopping_cart_page_product_qty', $product->quantity)
+                ->assertSeeIn('@shopping_cart_page_product_qty', $data['product111quantity'])
                 ->press('+')
                 ->pause(200)
-                ->assertSeeIn('@shopping_cart_page_product_qty', $product->quantity)
+                ->assertSeeIn('@shopping_cart_page_product_qty', $data['product111quantity'])
                 ->resize(1920, 1080)
                 ->screenshot('s3-t4');
         });

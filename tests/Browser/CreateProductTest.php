@@ -5,11 +5,13 @@ namespace Tests\Browser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use Tests\CreateData;
 use Tests\DuskTestCase;
 
 class CreateProductTest extends DuskTestCase
 {
     use DatabaseMigrations;
+    use CreateData;
 
     /** @test */
     public function it_checks_the_validation_and_creates_a_product()

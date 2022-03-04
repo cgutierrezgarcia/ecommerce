@@ -5,11 +5,13 @@ namespace Tests\Browser;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use Tests\CreateData;
 use Tests\DuskTestCase;
 
 class ExampleTest extends DuskTestCase
 {
     use DatabaseMigrations;
+    use CreateData;
 
     /**
      * A basic browser test example.

@@ -1,0 +1,26 @@
+
+
+Nota:
+los tests deberían pasar a la primera,
+a mi me han pasado todos, todas las veces,
+pero dusk puede fallar a veces.
+
+
+Ejercicio 1 realizado en los siguientes tests:
+
+it_shows_the_categories_from_nav
+it_shows_the_subcategories_from_nav
+it_shows_the_correct_links_when_login_or_logout
+it_shows_five_products_from_one_category
+it_only_shows_the_published_products
+
+it_can_access_the_product_details
+it_shows_the_product_details
+the_decrement_and_increment_btns_works_as_expected
+it_changes_the_product_stock_when_adding_a_product_to_the_cart
+
+the_red_circle_changes_when_adding_products
+
+the_search_filter_the_products_or_show_them_all_when_empty
+
+it_can_not_add_more_qty_than_a_product_without_color_or_size_has_in_stock

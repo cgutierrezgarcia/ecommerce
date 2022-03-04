@@ -6,11 +6,13 @@ namespace Tests\Browser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use Tests\CreateData;
 use Tests\DuskTestCase;
 
 class AdminPageTest extends DuskTestCase
 {
     use DatabaseMigrations;
+    use CreateData;
 
     /** @test */
     public function the_search_input_filter_the_products_or_show_them_all_when_empty()

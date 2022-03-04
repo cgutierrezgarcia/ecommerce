@@ -5,11 +5,13 @@ namespace Tests\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
+use Tests\CreateData;
 use Tests\DuskTestCase;
 
 class CategoryDetailPageTest extends DuskTestCase
 {
     use DatabaseMigrations;
+    use CreateData;
 
     /** @test */
     public function it_shows_the_category_details()

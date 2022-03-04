@@ -5,23 +5,24 @@ namespace Tests\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
+use Tests\CreateData;
 use Tests\DuskTestCase;
 
 class WelcomePageTest extends DuskTestCase
 {
     use DatabaseMigrations;
+    use CreateData;
 
     /** @test */
     function it_shows_the_categories_from_nav()
     {
-        $category1 = $this->createCategory();
-        $category2 = $this->createCategory();
+        $data = $this->createCategories(2);
 
-        $this->browse(function (Browser $browser) use ($category1, $category2) {
+        $this->browse(function (Browser $browser) use ($data) {
             $browser->visit('/')
                     ->clickLink('Categorías')
-                    ->assertSee($category1->name)
-                    ->assertSee($category2->name)
+                    ->assertSee($data['category1name'])
+                    ->assertSee($data['category1name'])
                     ->screenshot('s1-t1');
         });
     }
@@ -29,33 +30,25 @@ class WelcomePageTest extends DuskTestCase
     /** @test */
     function it_shows_the_subcategories_from_nav()
     {
-        $category1 = $this->createCategory();
-        $subcategory1a = $this->createSubcategory($category1->id);
-        $subcategory1b = $this->createSubcategory($category1->id);
+        $data = $this->createSubategories(2, 2);
 
-        $category2 = $this->createCategory();
-        $subcategory2a = $this->createSubcategory($category2->id);
-        $subcategory2b = $this->createSubcategory($category2->id);
-
-        $this->browse(function (Browser $browser) use (
-            $category1, $subcategory1a, $subcategory1b,
-            $category2, $subcategory2a, $subcategory2b) {
+        $this->browse(function (Browser $browser) use ($data) {
 
             $browser->visit('/')
                     ->clickLink('Categorías')
-                    ->assertSee($category1->name)
-                    ->assertSee($subcategory1a->name)
-                    ->assertSee($subcategory1b->name)
-                    ->assertSee($category2->name)
-                    ->assertDontSee($subcategory2a->name)
-                    ->assertDontSee($subcategory2b->name)
+                    ->assertSee($data['category1name'])
+                    ->assertSee($data['subcategory11name'])
+                    ->assertSee($data['subcategory12name'])
+                    ->assertSee($data['category2name'])
+                    ->assertDontSee($data['subcategory21name'])
+                    ->assertDontSee($data['subcategory22name'])
                     ->screenshot('s1-t2');
         });
     }
 
     /** @test */
     public function it_shows_the_correct_links_when_login_or_logout() {
-        $this->createCategory();
+        $data = $this->createCategoriesAndUsers();
 
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
@@ -68,11 +61,9 @@ class WelcomePageTest extends DuskTestCase
                 ->screenshot('s2-t1-unregistered-user');
         });
 
-        $user = $this->createUser();
-
-        $this->browse(function ($browser) use ($user) {
+        $this->browse(function ($browser) use ($data) {
             $browser->visit('/login')
-                ->type('email', $user->email)
+                ->type('email', $data['user1email'])
                 ->type('password', 'password')
                 ->press('INICIAR SESIÓN')
                 ->assertPathIs('/')
@@ -88,57 +79,32 @@ class WelcomePageTest extends DuskTestCase
 
     /** @test */
     public function it_shows_five_products_from_one_category() {
-        $category = $this->createCategory();
 
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
+        $data = $this->createProducts(5);
 
-        $subcategory = $this->createSubcategory($category->id);
-
-        $product1 = $this->createProduct($subcategory->id);
-        $product2 = $this->createProduct($subcategory->id);
-        $product3 = $this->createProduct($subcategory->id);
-        $product4 = $this->createProduct($subcategory->id);
-        $product5 = $this->createProduct($subcategory->id);
-
-        $this->browse(function (Browser $browser) use (
-            $product1, $product2, $product3, $product4, $product5) {
+        $this->browse(function (Browser $browser) use ($data) {
 
             $browser->visit('/')
                 ->pause(1000)
-                ->assertSee(Str::limit($product1->name, 20))
-                ->assertSee(Str::limit($product2->name, 20))
-                ->assertSee(Str::limit($product3->name, 20))
-                ->assertSee(Str::limit($product4->name, 20))
-                ->assertSee(Str::limit($product5->name, 20))
+                ->assertSee(Str::limit($data['product111name'], 20))
+                ->assertSee(Str::limit($data['product111name'], 20))
+                ->assertSee(Str::limit($data['product111name'], 20))
+                ->assertSee(Str::limit($data['product111name'], 20))
+                ->assertSee(Str::limit($data['product111name'], 20))
                 ->screenshot('s2-t2');
         });
     }
 
     /** @test */
     public function it_only_shows_the_published_products() {
-        $category = $this->createCategory();
+        $data = $this->createProducts(2, 1, 1, false);
 
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-
-        $product1 = $this->createProduct($subcategory->id);
-        $product2 = $this->createProduct($subcategory->id);
-
-        $product3 = $this->createProduct($subcategory->id, $brand->id, 1);
-        $product4 = $this->createProduct($subcategory->id, $brand->id, 1);
-
-        $this->browse(function (Browser $browser) use (
-            $product1, $product2, $product3, $product4) {
+        $this->browse(function (Browser $browser) use ($data) {
 
             $browser->visit('/')
                 ->pause(1000)
-                ->assertSee(Str::limit($product1->name, 20))
-                ->assertSee(Str::limit($product2->name, 20))
-                ->assertDontSee(Str::limit($product3->name, 20))
-                ->assertDontSee(Str::limit($product4->name, 20))
+                ->assertSee(Str::limit($data['product112name'], 20))
+                ->assertDontSee(Str::limit($data['product111name'], 20))
                 ->screenshot('s2-t3');
         });
     }

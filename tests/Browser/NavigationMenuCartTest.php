@@ -11,11 +11,13 @@ use App\Models\Size;
 use App\Models\Subcategory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use Tests\CreateData;
 use Tests\DuskTestCase;
 
 class NavigationMenuCartTest extends DuskTestCase
 {
     use DatabaseMigrations;
+    use CreateData;
 
     /** @test */
     public function it_adds_products_to_the_navigation_menu_cart()
@@ -85,25 +87,18 @@ class NavigationMenuCartTest extends DuskTestCase
     /** @test */
     public function the_red_circle_changes_when_adding_products()
     {
-        $category = $this->createCategory();
+        $data = $this->createProducts(2);
 
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
+        $this->browse(function (Browser $browser) use ($data) {
 
-        $subcategory = $this->createSubcategory($category->id);
-
-        $product1 = $this->createProduct($subcategory->id, $brand->id);
-        $product2 = $this->createProduct($subcategory->id, $brand->id);
-
-        $this->browse(function (Browser $browser) use ($product1, $product2) {
-
-            $browser->visit('/products/' . $product1->slug)
+            $browser->visit('/products/' . $data['product111slug'])
+                ->pause(1000)
                 ->pause(1000)
                 ->press('AGREGAR AL CARRITO DE COMPRAS')
                 ->pause(1000)
                 ->assertSeeIn('@cart_red_circle', '1');
 
-            $browser->visit('/products/' . $product2->slug)
+            $browser->visit('/products/' . $data['product112slug'])
                 ->pause(1000)
                 ->press('AGREGAR AL CARRITO DE COMPRAS')
                 ->pause(1000)

@@ -4,37 +4,31 @@ namespace Tests\Browser;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use Tests\CreateData;
 use Tests\DuskTestCase;
 
 class SearchPageTest extends DuskTestCase
 {
     use DatabaseMigrations;
+    use CreateData;
 
     /** @test */
     public function the_search_filter_the_products_or_show_them_all_when_empty()
     {
-        $category = $this->createCategory();
+        $data = $this->createProducts(2);
 
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-
-        $product1 = $this->createProduct($subcategory->id, $brand->id);
-        $product2 = $this->createProduct($subcategory->id, $brand->id);
-
-        $this->browse(function (Browser $browser) use ($product1, $product2) {
-            $browser->visit('/search?name=' . $product1->name)
+        $this->browse(function (Browser $browser) use ($data) {
+            $browser->visit('/search?name=' . $data['product111name'])
                 ->pause(1000)
-                ->assertSee($product1->name)
-                ->assertDontSee($product2->name)
+                ->assertSee($data['product111name'])
+                ->assertDontSee($data['product112name'])
                 ->screenshot('s3-t6-filter')
                 ->pause(300);
 
             $browser->visit('/search?name=')
                 ->pause(1000)
-                ->assertSee($product1->name)
-                ->assertSee($product2->name)
+                ->assertSee($data['product111name'])
+                ->assertSee($data['product112name'])
                 ->screenshot('s3-t6-empty');
         });
     }
