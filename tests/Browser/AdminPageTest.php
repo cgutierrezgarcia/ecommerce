@@ -20,34 +20,20 @@ class AdminPageTest extends DuskTestCase
     /** @test */
     public function the_search_input_filter_the_products_or_show_them_all_when_empty()
     {
-        $role = Role::create(['name' => 'admin']);
+        $this->createRole();
+
         $user = User::factory()->create()->assignRole('admin');
 
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
 
-        $product1 = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id
-        ]);
-        $product2 = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id
-        ]);
+        $product1 = $this->createProduct($subcategory->id, $brand->id);
+        $product2 = $this->createProduct($subcategory->id, $brand->id);
 
-        for ($i = 1; $i <= 2; $i++) {
-            Image::factory()->create([
-                'imageable_id' => $i,
-                'imageable_type' => Product::class
-            ]);
-        }
 
         $this->browse(function (Browser $browser) use ($user, $product1, $product2) {
             $browser->loginAs(User::find($user->id))

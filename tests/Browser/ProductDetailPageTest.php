@@ -199,34 +199,22 @@ class ProductDetailPageTest extends DuskTestCase
     /** @test */
     public function it_changes_the_product_stock_when_adding_a_product_to_the_cart()
     {
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
-
-        $product = Product::factory()->create([
-            'subcategory_id' => $subcategory->id,
-            'brand_id' => $brand->id,
-            'quantity' => 10
-        ]);
-        Image::factory()->create([
-            'imageable_id' => $product->id,
-            'imageable_type' => Product::class
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
+        $product = $this->createProduct($subcategory->id, $brand->id);
 
         $this->browse(function (Browser $browser) use ($product) {
 
             $browser->visit('/products/' . $product->slug)
                 ->pause(1000)
-                ->assertSeeIn('@product_stock', 10)
+                ->assertSeeIn('@product_stock', 5)
                 ->press('AGREGAR AL CARRITO DE COMPRAS')
                 ->pause(300)
-                ->assertSeeIn('@product_stock', 10 -1)
+                ->assertSeeIn('@product_stock', 5 -1)
                 ->screenshot('s4-t4');
         });
     }

@@ -20,23 +20,16 @@ class CreateProductTest extends DuskTestCase
     /** @test */
     public function it_checks_the_validation_and_creates_a_product()
     {
-        $role = Role::create(['name' => 'admin']);
+        $this->createRole();
+
         $user = User::factory()->create()->assignRole('admin');
 
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $brand = Brand::factory()->create();
-        $category->brands()->attach($brand->id);
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
 
-        $subcategory = Subcategory::factory()->create([
-            'color' => false,
-            'size' => false
-        ]);
-
-        Image::factory()->create([
-            'imageable_id' => 1,
-            'imageable_type' => Product::class
-        ]);
+        $subcategory = $this->createSubcategory($category->id);
 
         $this->browse(function (Browser $browser) use ($user, $category, $subcategory, $brand) {
             $browser->loginAs(User::find($user->id))

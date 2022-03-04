@@ -17,6 +17,7 @@ use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Laravel\Dusk\TestCase as BaseTestCase;
+use Spatie\Permission\Models\Role;
 
 abstract class DuskTestCase extends BaseTestCase
 {
@@ -78,6 +79,11 @@ abstract class DuskTestCase extends BaseTestCase
     public function createUser()
     {
         return User::factory()->create();
+    }
+
+    public function createRole($name = 'admin')
+    {
+        Role::create(['name' => $name]);
     }
 
     public function createBrand()
