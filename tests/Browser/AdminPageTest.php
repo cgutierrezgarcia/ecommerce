@@ -17,20 +17,10 @@ class AdminPageTest extends DuskTestCase
     /** @test */
     public function the_search_input_filter_the_products_or_show_them_all_when_empty()
     {
-        $this->createRole();
-        $user = $this->createUser();
-        $this->assignRole($user->id, 'admin');
+        $user = $this->createUserWithRole('admin');
 
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-
-        $product1 = $this->createProduct($subcategory->id, $brand->id);
-        $product2 = $this->createProduct($subcategory->id, $brand->id);
-
+        $product1 = $this->createProducts2();
+        $product2 = $this->createProducts2();
 
         $this->browse(function (Browser $browser) use ($user, $product1, $product2) {
             $browser->loginAs(User::find($user->id))

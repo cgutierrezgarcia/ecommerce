@@ -85,15 +85,7 @@ class CreateOrderPageTest extends DuskTestCase
     /** @test */
     public function it_checks_that_the_order_is_created_and_destroys_the_cart_and_redirects_to_payment() {
         $user = $this->createUser();
-
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-
-        $product = $this->createProduct($subcategory->id, $brand->id);
+        $product = $this->createProducts2();
 
         $this->browse(function ($browser) use ($user, $product) {
             $browser->loginAs(User::find($user->id))
@@ -121,20 +113,16 @@ class CreateOrderPageTest extends DuskTestCase
     public function it_shows_that_the_chained_selects_are_loaded_correctly_depending_on_the_chosen_option() {
         $user = $this->createUser();
 
-        $category = $this->createCategory();
+        $product = $this->createProducts2();
 
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-
-        $product = $this->createProduct($subcategory->id, $brand->id);
-
+        $department = $this->createDepartmentWithCityAndDistrict();
+        /*
         $department = $this->createDepartment();
         $city = $this->createCity($department->id);
         $district = $this->createDistrict($city->id);
+        */
 
-        $this->browse(function ($browser) use ($user, $product, $department, $city, $district) {
+        $this->browse(function ($browser) use ($user, $product, $department) {
             $browser->loginAs(User::find($user->id))
                 ->pause(1000)
                 ->visit('/products/' . $product->slug)
@@ -146,20 +134,20 @@ class CreateOrderPageTest extends DuskTestCase
                 ->radio('envio_type', '2')
                 ->pause(300)
 
-                ->assertSelectMissingOption('@city', $city->id)
-                ->assertSelectMissingOption('@district', $district->id)
+                ->assertSelectMissingOption('@city', $department->cities->first()->id)
+                ->assertSelectMissingOption('@district', $department->cities->first()->districts->first()->id)
                 ->select('@department', 1)
                 ->pause(300)
                 ->assertSelected('@department', $department->id)
 
-                ->assertSelectMissingOption('@district', $district->id)
+                ->assertSelectMissingOption('@district', $department->cities->first()->districts->first()->id)
                 ->select('@city', 1)
                 ->pause(300)
-                ->assertSelected('@city', $city->id)
+                ->assertSelected('@city', $department->cities->first()->id)
 
                 ->select('@district', 1)
                 ->pause(300)
-                ->assertSelected('@district', $district->id)
+                ->assertSelected('@district', $department->cities->first()->districts->first()->id)
                 ->screenshot('s3-t14');
         });
     }

@@ -20,29 +20,9 @@ class ShoppingCartPageTest extends DuskTestCase
      */
     public function it_adds_every_product_type_to_the_cart()
     {
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-        $product = $this->createProduct($subcategory->id, $brand->id);
-
-
-        $subcategoryColor = $this->createSubcategory($category->id, true);
-        $productWithColor = $this->createProduct($subcategoryColor->id, $brand->id);
-
-        $color = $this->createColor();
-        $this->attachColorToProduct($productWithColor->id, $color->id);
-
-
-        $subcategoryColorSize = $this->createSubcategory($category->id, true, true);
-        $productWithColorSize = $this->createProduct($subcategoryColorSize->id, $brand->id);
-
-        $color2 = $this->createColor('Verde');
-        $size = $this->createSize($productWithColorSize->id);
-        $this->attachSizeToColors($size->id);
-
+        $product = $this->createProducts2();
+        $productWithColor = $this->createProducts2(2, 10, true);
+        $productWithColorSize = $this->createProducts2(2, 15, true, true);
 
         $this->browse(function (Browser $browser) use (
             $product, $productWithColor, $productWithColorSize) {
@@ -109,19 +89,7 @@ class ShoppingCartPageTest extends DuskTestCase
     /** @test */
     public function it_can_not_add_more_qty_than_a_product_with_color_has_in_stock()
     {
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-
-        $subcategoryColor = $this->createSubcategory($category->id, true);
-        $productWithColor = $this->createProduct($subcategoryColor->id, $brand->id);
-
-        $color = $this->createColor();
-        $this->attachColorToProduct($productWithColor->id, $color->id);
-
+        $productWithColor = $this->createProducts2(2, 10, true);
 
         $this->browse(function (Browser $browser) use ($productWithColor) {
 
@@ -153,17 +121,7 @@ class ShoppingCartPageTest extends DuskTestCase
     /** @test */
     public function it_can_not_add_more_qty_than_a_product_with_size_and_color_has_in_stock()
     {
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategoryColorSize = $this->createSubcategory($category->id, true, true);
-        $productWithColorSize = $this->createProduct($subcategoryColorSize->id, $brand->id);
-
-        $color2 = $this->createColor('Verde');
-        $size = $this->createSize($productWithColorSize->id);
-        $this->attachSizeToColors($size->id);
+        $productWithColorSize = $this->createProducts2(2, 15, true, true);
 
         $this->browse(function (Browser $browser) use ($productWithColorSize) {
 
@@ -199,13 +157,7 @@ class ShoppingCartPageTest extends DuskTestCase
     /** @test */
     public function it_changes_the_total_qty_when_the_products_qty_increases_or_decreases()
     {
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-        $product = $this->createProduct($subcategory->id, $brand->id);
+        $product = $this->createProducts2();
 
         $this->browse(function (Browser $browser) use ($product) {
 
@@ -235,13 +187,7 @@ class ShoppingCartPageTest extends DuskTestCase
     /** @test */
     public function it_can_empty_the_cart_and_remove_a_product()
     {
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-        $product = $this->createProduct($subcategory->id, $brand->id);
+        $product = $this->createProducts2();
 
         $this->browse(function (Browser $browser) use ($product) {
 
@@ -278,19 +224,8 @@ class ShoppingCartPageTest extends DuskTestCase
     public function it_saved_the_cart_in_the_db_when_logout_and_is_retrieved_when_login() {
         $user = $this->createUser();
 
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory1 = $this->createSubcategory($category->id);
-        $subcategory2 = $this->createSubcategory($category->id, true);
-
-        $product1 = $this->createProduct($subcategory1->id, $brand->id);
-
-        $product2 = $this->createProduct($subcategory2->id, $brand->id);
-        $color = $this->createColor();
-        $this->attachColorToProduct($product2->id, $color->id);
+        $product1 = $this->createProducts2();
+        $product2 = $this->createProducts2(2, 10, true);
 
         $this->browse(function ($browser) use ($user, $product1, $product2) {
             $browser->loginAs(User::find($user->id))

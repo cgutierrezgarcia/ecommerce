@@ -2,13 +2,6 @@
 
 namespace Tests\Browser;
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Color;
-use App\Models\Image;
-use App\Models\Product;
-use App\Models\Size;
-use App\Models\Subcategory;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
@@ -88,19 +81,9 @@ class ProductDetailPageTest extends DuskTestCase
     /** @test */
     public function it_shows_the_product_color_and_size_selects()
     {
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id, false, false);
-        $product = $this->createProduct($subcategory->id, $brand->id);
-
-        $subcategoryColor = $this->createSubcategory($category->id, true);
-        $productColor = $this->createProduct($subcategoryColor->id, $brand->id);
-
-        $subcategoryColorSize = $this->createSubcategory($category->id, true, true);
-        $productColorSize = $this->createProduct($subcategoryColorSize->id, $brand->id);
+        $product = $this->createProducts2();
+        $productColor = $this->createProducts2(2, 10, true);
+        $productColorSize = $this->createProducts2(2, 15, true, true);
 
         $this->browse(function (Browser $browser) use ($product, $productColor, $productColorSize) {
 
@@ -127,28 +110,9 @@ class ProductDetailPageTest extends DuskTestCase
     /** @test */
     public function it_shows_the_stock_of_every_product_type()
     {
-        $category = $this->createCategory();
-
-        $brand = $this->createBrand();
-        $this->attachBrandToCategory($category->id, $brand->id);
-
-        $subcategory = $this->createSubcategory($category->id);
-        $product = $this->createProduct($subcategory->id, $brand->id);
-
-
-        $subcategoryColor = $this->createSubcategory($category->id, true);
-        $productWithColor = $this->createProduct($subcategoryColor->id, $brand->id);
-
-        $color = $this->createColor();
-        $this->attachColorToProduct($productWithColor->id, $color->id);
-
-
-        $subcategoryColorSize = $this->createSubcategory($category->id, true, true);
-        $productWithColorSize = $this->createProduct($subcategoryColorSize->id, $brand->id);
-
-        $color2 = $this->createColor('Verde');
-        $size = $this->createSize($productWithColorSize->id);
-        $this->attachSizeToColors($size->id);
+        $product = $this->createProducts2();
+        $productWithColor = $this->createProducts2(2, 10, true);
+        $productWithColorSize = $this->createProducts2(2, 15, true, true);
 
         $this->browse(function (Browser $browser) use ($product, $productWithColor, $productWithColorSize) {
 

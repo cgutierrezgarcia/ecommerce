@@ -32,6 +32,17 @@ trait CreateData
         User::find($userId)->assignRole($roleName);
     }
 
+    public function createUserWithRole($roleName)
+    {
+        Role::create(['name' => $roleName]);
+
+        $user = User::factory()->create();
+
+        User::find($user->id)->assignRole($roleName);
+
+        return $user;
+    }
+
     public function createBrand()
     {
         return Brand::factory()->create();
@@ -58,11 +69,9 @@ trait CreateData
 
         for ($i = 1; $i <= $categoryNum; $i++) {
             if (is_null($brandId)) {
-                $category = Category::factory()->create();
+                $category = $this->createCategory();
             } else {
-                $category = Category::factory()->create([
-                    'brand_id' => $brandId,
-                ]);
+                $category = $this->createCategory($brandId);
             }
 
             $data += [
@@ -80,11 +89,9 @@ trait CreateData
 
         for ($i = 1; $i <= $categoryNum; $i++) {
             if (is_null($brandId)) {
-                $category = Category::factory()->create();
+                $category = $this->createCategory();
             } else {
-                $category = Category::factory()->create([
-                    'brand_id' => $brandId,
-                ]);
+                $category = $this->createCategory($brandId);
             }
 
             $data += [
@@ -94,8 +101,7 @@ trait CreateData
         }
 
         for ($i = 1; $i <= $usersNum; $i++) {
-
-            $user = User::factory()->create();
+            $user = $this->createUser();
 
             $data += [
                 'user'. $user->id => $user->id,
@@ -262,6 +268,30 @@ trait CreateData
         return $data;
     }
 
+    public function createProducts2($status = 2, $quantity = 5, $withColor = false, $withSize = false, $colorName = 'Azul', $sizeName = 'Talla XL') {
+        $category = $this->createCategory();
+
+        $brand = $this->createBrand();
+        $this->attachBrandToCategory($category->id, $brand->id);
+
+        $subcategory = $this->createSubcategory($category->id, $withColor, $withSize);
+
+        $product = $this->createProduct($subcategory->id, $brand->id, $status, $quantity);
+
+        if ($withColor) {
+            $color = $this->createColor($colorName);
+            $this->attachColorToProduct($product->id, $color->id, $quantity);
+        }
+
+        if ($withSize && $withColor) {
+            $this->createColor($colorName);
+            $size = $this->createSize($product->id, $sizeName);
+            $this->attachSizeToColors($size->id);
+        }
+
+        return $product;
+    }
+
     public function createColor($name = 'Azul')
     {
         return Color::create(['name' => $name]);
@@ -319,5 +349,20 @@ trait CreateData
         return District::factory()->create([
             'city_id' => $cityId,
         ]);
+    }
+
+    public function createDepartmentWithCityAndDistrict()
+    {
+        $department = Department::factory()->create();
+
+        $city = City::factory()->create([
+            'department_id' => $department->id,
+        ]);
+
+        District::factory()->create([
+            'city_id' => $city->id,
+        ]);
+
+        return $department;
     }
 }
