@@ -306,6 +306,18 @@ class ShoppingCartPageTest extends DuskTestCase
                 ->press('+')
                 ->pause(300)
                 ->press('AGREGAR AL CARRITO DE COMPRAS')
+                ->pause(300)
+                ->visit('/shopping-cart')
+                ->pause(1000)
+                ->assertsee($product1->name)
+                ->assertSeeIn('@shopping_cart_page_product_qty', 1)
+                ->assertSourceHas($product1->price)
+                ->assertsee($product2->name)
+                ->assertSeeIn('@shopping_cart_page_product_with_color_qty', 2)
+                ->assertSourceHas($product2->price)
+                ->pause(300)
+                ->screenshot('cart-before-the-user-logout')
+
                 ->click('@registered_user_img')
                 ->pause(1000)
                 ->clickLink('Finalizar sesión')
@@ -314,7 +326,8 @@ class ShoppingCartPageTest extends DuskTestCase
                 ->pause(1000)
                 ->assertDontsee($product1->name)
                 ->assertDontsee($product2->name)
-                ->screenshot('s3-t11-unregistered-user')
+                ->screenshot('cart-when-the-user-is-logout')
+
                 ->loginAs(User::find($user->id))
                 ->pause(1000)
                 ->visit('/shopping-cart')
@@ -325,7 +338,7 @@ class ShoppingCartPageTest extends DuskTestCase
                 ->assertsee($product2->name)
                 ->assertSeeIn('@shopping_cart_page_product_with_color_qty', 2)
                 ->assertSourceHas($product2->price)
-                ->screenshot('s3-t11-registered-user');
+                ->screenshot('cart-when-the-user-login');
         });
     }
     // Fin ejercicio 2
