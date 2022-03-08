@@ -28,7 +28,7 @@
                              type="text"
                              placeholder="Subcategoría" />
             </div>
- -->
+
             <div class="px-6 py-4 w-1/3">
                 <x-jet-label value="Marca" />
                 <x-jet-input wire:model="brandSearch"

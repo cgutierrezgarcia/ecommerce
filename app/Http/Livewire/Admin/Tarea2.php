@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Admin;
 
+use App\Filters\ProductFilter;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
@@ -68,55 +69,24 @@ class Tarea2 extends Component
         $this->maxDateSearch = date(Product::all('created_at')->max()->created_at);
     }
 
-    public function render()
+    public function getProducts(ProductFilter $productFilter) {
+        return Product::query()
+            ->filterBy($productFilter, [
+                'search' => $this->search,
+                'categorySearch' => $this->categorySearch,
+                'subcategorySearch' => $this->subcategorySearch,
+                'brandSearch' => $this->brandSearch,
+                'status' => $this->status,
+                'colorsFilter' => $this->colorsFilter,
+                'sizeFilter' => $this->sizeFilter,
+            ])
+            ->orderBy($this->orderColumn, $this->order)
+            ->paginate($this->paginate);
+    }
+
+    public function render(ProductFilter $productFilter)
     {
-        $products = Product::query()->where('name', 'LIKE', "%{$this->search}%");
-
-        if ($this->categorySearch) {
-            $products = $products->whereHas('subcategory', function (Builder $query) {
-                $query->whereHas('category', function (Builder $query) {
-                    $query->where('name', 'LIKE', "%{$this->categorySearch}%");
-                });
-            });
-        }
-
-        if ($this->subcategorySearch) {
-            $products = $products->whereHas('subcategory', function (Builder $query) {
-                $query->where('name', 'LIKE', "%{$this->subcategorySearch}%");
-            });
-        }
-
-        if ($this->brandSearch) {
-            $products = $products->whereHas('brand', function (Builder $query) {
-                $query->where('name', 'LIKE', "%{$this->brandSearch}%");
-            });
-        }
-
-        if ($this->status) {
-            $products = $products->where('status', $this->status);
-        }
-
-        if ($this->minPriceSearch || $this->maxPriceSearch) {
-            $products = $products
-                ->whereBetween('price', [$this->minPriceSearch, $this->maxPriceSearch]);
-        }
-
-        if ($this->colorsFilter) {
-            $products = $products->whereHas('colors');
-        }
-
-        if ($this->sizeFilter) {
-            $products = $products->whereHas('sizes');
-        }
-
-        if ($this->minDateSearch || $this->maxDateSearch) {
-            $products = $products
-                ->whereBetween('created_at', [date($this->minDateSearch), date($this->maxDateSearch)]);
-        }
-
-        $products = $products->orderBy($this->orderColumn, $this->order)->paginate($this->paginate);
-
-        return view('livewire.admin.tarea2', compact('products'))
+        return view('livewire.admin.tarea2', ['products' => $this->getProducts($productFilter)])
             ->layout('layouts.admin');
     }
 }
