@@ -128,6 +128,9 @@
                     <th wire:click="orderByColumn('id')" scope="col" class="{{ $idSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         ID
                     </th>
+                    <th wire:click="orderByColumn('id')" scope="col" class="{{ $idSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Vendido
+                    </th>
                     <th wire:click="orderByColumn('name')" scope="col" class="{{ $nameSH ? 'hidden' : '' }} cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Nombre
                     </th>
@@ -177,6 +180,20 @@
                     <tr>
                         <td class="{{ $idSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $product->id }}</div>
+                        </td>
+                        <td class="{{ $idSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                @php
+                                foreach ($this->orders as $order) {
+                                     $content = json_decode($order->content, true);
+                                     $keys = array_keys($content);
+
+                                     if ($content[$keys[0]]['id'] === $product->id) {
+                                         echo $content[$keys[0]]['qty'];
+                                     }
+                                }
+                                @endphp
+                            </div>
                         </td>
                         <td class="{{ $nameSH ? 'hidden' : '' }} px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Admin;
 
 use App\Filters\ProductFilter;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
@@ -28,12 +29,16 @@ class Tarea2 extends Component
         $minPriceSearch, $maxPriceSearch, $colorsFilter, $sizeFilter,
         $minDateSearch, $maxDateSearch;
 
+    public $orders;
+
     public function mount() {
         $this->minPriceSearch = Product::all('price')->min()->price;
         $this->maxPriceSearch = Product::all('price')->max()->price;
 
         $this->minDateSearch = date(Product::all('created_at')->min()->created_at);
         $this->maxDateSearch = date(Product::all('created_at')->max()->created_at);
+
+        $this->orders = Order::all();
     }
 
     public function updatingSearch()
